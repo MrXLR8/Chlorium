@@ -6,6 +6,7 @@ using NLog.Web;
 
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace DiscrodBot
 {
@@ -16,7 +17,8 @@ namespace DiscrodBot
             var logger = NLog.Web.NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {
-                logger.Warn("Started");
+                logger.Warn($"Started {Assembly.GetExecutingAssembly().GetName().Version.ToString()}");
+                Logic.init();
                 DiscordNet.Start();
                 CreateHostBuilder(args).Build().Run();
             }

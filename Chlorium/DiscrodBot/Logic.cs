@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.WebSocket;
 
+using NLog;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +13,14 @@ namespace DiscrodBot
 {
     public static class  Logic
     {
-
-        public static bool containsEmoji(IMessage message )
+        static Logger nlog;
+        public static void init()
         {
-
+            nlog  =LogManager.GetCurrentClassLogger();
+        }
+            public static bool containsEmoji(IMessage message )
+        {
+           
             string regex = "(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])";
             var reg = Regex.Match(message.Content, regex);
             if (reg.Success)
@@ -48,18 +54,18 @@ namespace DiscrodBot
         {
             if(containsEmoji(message))
             {
-                Console.WriteLine("There is emoji");
+                nlog.Info($"{message.Author} : {message.Content} ");
                 DateTime? currentMessage = message.CreatedAt.UtcDateTime;
                 DateTime? previousMessage = await LastMessageTimeAsync(message.Channel, message.Author);
                 if(previousMessage==null)
                 {
-                    Console.WriteLine("Hes first message");
+                    nlog.Info($"{message.Author} no previous messages. Deleting");
                     await message.DeleteAsync();
                     return;
                 }
                 if(!emojiFreeInterval(currentMessage,previousMessage,TimeSpan.FromSeconds(5))) 
                 {
-                    Console.WriteLine("Is in range");
+                    nlog.Info($"{message.Author} posted with no message.");
                     await message.DeleteAsync();
                 }
             }
