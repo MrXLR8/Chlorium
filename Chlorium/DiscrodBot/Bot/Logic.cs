@@ -68,8 +68,9 @@ namespace DiscrodBot
                 if (!emojiFreeInterval(currentMessage, previousMessage, TimeSpan.FromSeconds(5)))
                 {
                     nlog.Info($"{message.Author} posted with no message.");
-                    await CreateReactions(lastmessage);
                     await message.DeleteAsync();
+                    await CreateReactions(lastmessage);
+                   
                     return true;
                 }
             }

@@ -25,6 +25,7 @@ namespace DiscrodBot
                     new AnnoReaction(),
                     new YandexReaction()
                 };
+                Reaction.init();
                 Logic.init();
                 DiscordNet.Start();
                 CreateHostBuilder(args).Build().Run();
