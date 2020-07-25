@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using DiscrodBot.Bot.Reactions;
+
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -18,6 +20,11 @@ namespace DiscrodBot
             try
             {
                 logger.Warn($"Started {Assembly.GetExecutingAssembly().GetName().Version.ToString()}");
+                Reaction.reactList = new System.Collections.Generic.List<Reaction>()
+                {
+                    new AnnoReaction(),
+                    new YandexReaction()
+                };
                 Logic.init();
                 DiscordNet.Start();
                 CreateHostBuilder(args).Build().Run();

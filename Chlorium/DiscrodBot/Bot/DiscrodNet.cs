@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using NLog;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -25,8 +26,23 @@ namespace DiscrodBot
 
         private static async Task MessageReceived(SocketMessage message)
         {
-           await Logic.Validate(message);
-           
+            if (!await Logic.DeleteStupidEmojis(message)) 
+                Reaction.CheckForReaction(message);
+            
+        }
+
+        public static async Task<IMessage> LastUserMessage(ISocketMessageChannel channel, SocketUser user,int messagecount=20)
+        {
+            IEnumerable<IMessage> hismessages = await channel.GetMessagesAsync(messagecount).FlattenAsync();
+            IMessage lastmessage = hismessages
+                .Where(u => u.Author.Id == user.Id)
+                .OrderByDescending(m => m.CreatedAt)
+                .Skip(1)
+                .FirstOrDefault();
+            
+            if (lastmessage == null) return null;
+
+            return lastmessage;
         }
 
         public static async void Auth()

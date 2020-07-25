@@ -50,7 +50,7 @@ namespace DiscrodBot
             return false;
         }
 
-        public static async Task Validate(SocketMessage message)
+        public static async Task<bool> DeleteStupidEmojis(SocketMessage message)
         {
             if (containsEmoji(message))
             {
@@ -63,16 +63,17 @@ namespace DiscrodBot
                     nlog.Info($"{message.Author} no previous messages. Deleting");
 
                     await message.DeleteAsync();
-                    return;
+                    return true;
                 }
                 if (!emojiFreeInterval(currentMessage, previousMessage, TimeSpan.FromSeconds(5)))
                 {
                     nlog.Info($"{message.Author} posted with no message.");
                     await CreateReactions(lastmessage);
                     await message.DeleteAsync();
-
+                    return true;
                 }
             }
+            return false;
         }
 
         static List<Emoji> emojis = new List<Emoji>()
