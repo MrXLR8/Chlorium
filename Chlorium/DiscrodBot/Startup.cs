@@ -11,6 +11,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using DiscordBot;
+using DiscrodBot.Services;
 
 namespace DiscrodBot
 {
@@ -27,7 +30,11 @@ namespace DiscrodBot
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen();
+            services.AddDbContext<DatabaseContext>();
+            services.AddScoped<Guesser>();
+            services.AddScoped<ChannelMonitor>();
             services.AddControllers();
+            services.AddSingleton<DiscordClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +44,7 @@ namespace DiscrodBot
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.ApplicationServices.GetService<DiscordClient>();
             app.UseSwagger();
             app.UseHttpsRedirection();
 
