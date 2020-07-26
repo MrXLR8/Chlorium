@@ -18,17 +18,22 @@ namespace DiscrodBot
         {
             nlog = LogManager.GetCurrentClassLogger();
         }
-        public static bool containsEmoji(IMessage message)
+        public static bool containsEmoji(string content,IEnumerable<string> tags)
         {
-
-            string regex = "(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])";
-            var reg = Regex.Match(message.Content, regex);
-            if (reg.Success)
+            string withnoEmotes = Regex.Replace(content, @"\p{Cs}","");
+            foreach (var item in tags)
             {
-                if (reg.Captures.Count == message.Content.Length - 1)
-                    return true;
+                withnoEmotes=withnoEmotes.Replace(item, "");
+                withnoEmotes= withnoEmotes.Trim();
             }
-            return message.Tags.Any(t => t.Type == TagType.Emoji);
+                
+            return withnoEmotes.Trim().Length == 0;
+        }
+
+
+        public static IEnumerable<string> emotesTags(IReadOnlyCollection<ITag> tags)
+        {
+            return tags.Select(s => s.ToString().Split(" ")[0]).Distinct();
         }
 
         public static async Task<IMessage> LastMessage(ISocketMessageChannel channel, SocketUser user)
@@ -38,7 +43,9 @@ namespace DiscrodBot
                 .Where(u => u.Author.Id == user.Id)
                 .OrderByDescending(m => m.CreatedAt)
                 .Skip(1)
-                .FirstOrDefault(m => !containsEmoji(m));
+                .FirstOrDefault(m => 
+                    !containsEmoji(m.Content, emotesTags(m.Tags))
+                    );
             if (lastmessage == null) return null;
 
             return lastmessage;
@@ -52,7 +59,7 @@ namespace DiscrodBot
 
         public static async Task<bool> DeleteStupidEmojis(SocketMessage message)
         {
-            if (containsEmoji(message))
+            if (containsEmoji(message.Content,emotesTags(message.Tags)))
             {
                 nlog.Info($"{message.Author} : {message.Content} ");
                 IMessage lastmessage = await LastMessage(message.Channel, message.Author);

@@ -18,7 +18,8 @@ namespace DiscrodBot.Bot.Reactions
         public override string[] trigger { get; set; } = new string[]
         {
             "yandex",
-            "яндекс"
+            "яндекс",
+            "ya.ru"
         };
         protected override bool check(SocketMessage message)
         {

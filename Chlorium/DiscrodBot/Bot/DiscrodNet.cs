@@ -49,6 +49,9 @@ namespace DiscrodBot
         {
                 var token = Environment.GetEnvironmentVariable("DiscordToken");
             if (token == null) throw new Exception("Please fill discord token env. value");
+#if DEBUG
+          await  client.SetGameAsync("Дебажу новые фичи (баги)",null,ActivityType.CustomStatus);
+#endif
             await client.LoginAsync(TokenType.Bot,token);
             await client.StartAsync();
 
