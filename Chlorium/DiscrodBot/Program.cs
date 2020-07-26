@@ -1,4 +1,5 @@
-﻿using DiscrodBot.Bot.Reactions;
+﻿using DiscrodBot.Bot;
+using DiscrodBot.Bot.Reactions;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -16,6 +17,7 @@ namespace DiscrodBot
     {
         public static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
             var logger = NLog.Web.NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {
@@ -25,9 +27,11 @@ namespace DiscrodBot
                     new AnnoReaction(),
                     new YandexReaction()
                 };
+             
                 Reaction.init();
                 Logic.init();
                 DiscordNet.Start();
+                new Waker().Start(60000);
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception exception)
@@ -39,8 +43,14 @@ namespace DiscrodBot
             finally
             {
                 // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+                DiscordNet.Stop();
                 NLog.LogManager.Shutdown();
+                
             }
+        }
+        static void OnProcessExit(object sender, EventArgs e)
+        {
+            DiscordNet.Stop();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

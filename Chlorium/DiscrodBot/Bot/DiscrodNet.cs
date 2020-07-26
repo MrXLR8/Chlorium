@@ -49,14 +49,25 @@ namespace DiscrodBot
         {
                 var token = Environment.GetEnvironmentVariable("DiscordToken");
             if (token == null) throw new Exception("Please fill discord token env. value");
+
 #if DEBUG
-          await  client.SetGameAsync("Дебажу новые фичи (баги)",null,ActivityType.CustomStatus);
+            await client.SetGameAsync("новые фичи(баги)", null, ActivityType.Watching);
+#endif
+#if !DEBUG
+          await  client.SetGameAsync("за школьниками",null,ActivityType.Watching);
 #endif
             await client.LoginAsync(TokenType.Bot,token);
+
             await client.StartAsync();
 
-
+           
             nlog.Info("Discord Logged in");
+        }
+
+        public static  async void Stop()
+        {
+            nlog.Info("Stopping Discord");
+            await client.StopAsync();
         }
 
 
