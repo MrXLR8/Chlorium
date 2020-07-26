@@ -27,7 +27,8 @@ namespace DiscrodBot.Services
        
         public bool checkForWord(string content )
         {
-            string triggerword = guesser.ActiveWord()?.word;
+            content = content.ToLower();
+            string triggerword = guesser.ActiveWord()?.word?.ToLower();
             if(string.IsNullOrEmpty(triggerword)) return false;
 
             if (triggerword == content) return true;
@@ -52,7 +53,7 @@ namespace DiscrodBot.Services
                     };
                     db.Add(sender);
                 }
-                #if DEBUG
+                #if !DEBUG
                 if (sender.id == guesser.ActiveWord().user.id) return; //ignore owner
                 #endif
                 sender.points++;

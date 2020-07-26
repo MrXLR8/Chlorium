@@ -99,7 +99,7 @@ namespace DiscrodBot.Services
                     GuessedWord word = new GuessedWord()
                     {
                         user = sender,
-                        word = string.Join(" ", cmd.arguments)
+                        word = combinedword.ToLower()
                     };
 
                     guesser.ActivateWord(word);
