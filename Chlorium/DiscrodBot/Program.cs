@@ -25,7 +25,8 @@ namespace DiscrodBot
                 Reaction.reactList = new System.Collections.Generic.List<Reaction>()
                 {
                     new AnnoReaction(),
-                    new YandexReaction()
+                    new YandexReaction(),
+                    new GuessReaction()
                 };
              
                 Reaction.init();
