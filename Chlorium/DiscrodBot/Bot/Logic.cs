@@ -20,7 +20,7 @@ namespace DiscrodBot
         }
         public static bool containsEmoji(string content,IEnumerable<string> tags)
         {
-            var reg = Regex.Match(content, "^(\s*(<:[^:]+:[0-9]+>|\p{Cs})\s*)+$");
+            var reg = Regex.Match(content, @"^(\s*(<:[^:]+:[0-9]+>|\p{Cs})\s*)+$");
             return reg.Success;
         }
 
